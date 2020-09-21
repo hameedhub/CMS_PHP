@@ -14,7 +14,7 @@ class AuthValidation{
             array_push($error_array, 'Password is required');
         };
         if(count($error_array) > 0){
-            return Helper::response(false, 400, json_encode($error_array));
+            return RHelper::response(false, 400, json_encode($error_array));
         }
 
 

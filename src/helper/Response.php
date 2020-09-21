@@ -1,6 +1,6 @@
 <?php
 
-class Helper{
+class RHelper{
 
     public static function response($status, $code, $msg, $data= '' ){
        $res = array(  'status'=> $status,
