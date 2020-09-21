@@ -5,6 +5,20 @@ class Auth
 
     static function create($data)
     {
+        $val = AuthValidation::signup($data);
+        if($val){
+            return $val;
+        }
+        extract($data);
+        $check = DB::query('SELECT email FROM users WHERE email=:email', array(':email'=> $email));
+        if(empty($check)){
+            $q = DB::query('INSERT INTO `users`( `fullname`, `email`, `pwd`) 
+            VALUES (:fullname,:email,:pwd)', array(':fullname'=>$fullname, 'email'=>$email, ':pwd'=> password_hash($pwd, PASSWORD_DEFAULT)));
+            return Helper::response(true, 201, 'User was successfully added', $q);
+        }else{
+            return Helper::response(false, 409, 'Email address already exist');
+        }
+       
     }
     public static function login($data)
     {
