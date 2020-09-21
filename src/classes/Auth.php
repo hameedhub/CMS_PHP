@@ -14,9 +14,9 @@ class Auth
         if(empty($check)){
             $q = DB::query('INSERT INTO `users`( `fullname`, `email`, `pwd`) 
             VALUES (:fullname,:email,:pwd)', array(':fullname'=>$fullname, 'email'=>$email, ':pwd'=> password_hash($pwd, PASSWORD_DEFAULT)));
-            return Helper::response(true, 201, 'User was successfully added', $q);
+            return RHelper::response(true, 201, 'User was successfully added', $q);
         }else{
-            return Helper::response(false, 409, 'Email address already exist');
+            return RHelper::response(false, 409, 'Email address already exist');
         }
        
     }
@@ -27,20 +27,24 @@ class Auth
             $q = DB::query('SELECT * FROM users WHERE email =:email', array(':email' => $email));
 
             if (count($q) > 0) {
-                if (password_verify($pwd, $q[0]['password'])) {
+                if (password_verify($pwd, $q[0]['pwd'])) {
 
                     Session::init();
                     Session::set('isLoggedIn', true);
                     Session::set('user', $q[0]);
-                    return Helper::response(true, 200, 'Login was successful', $q[0]);
+                    DB::query('UPDATE users SET session_id=:session_id WHERE email=:email', array(
+                        ':email' => $email,
+                        ':session_id'=> session_id()
+                    ));
+                    return RHelper::response(true, 200, 'Login was successful', $q[0]);
                 } else {
-                    return  Helper::response(false, 400, 'Invalid email or password');
+                    return  RHelper::response(false, 400, 'Invalid email or password');
                 }
             } else {
-                return   Helper::response(false, 400, 'Invalid email or password');
+                return   RHelper::response(false, 400, 'Invalid email or password');
             }
         } else {
-            return  Helper::response(false, 400, 'Email and password is required');
+            return  RHelper::response(false, 400, 'Email and password is required');
         }
     }
     static function fpwd($email)
