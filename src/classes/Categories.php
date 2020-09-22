@@ -19,6 +19,8 @@ class Categories
     }
     static function index()
     {
+        $q = DB::query('SELECT * FROM categories ORDER BY id DESC');
+        return RHelper::response(true, 200, 'success', $q);
     }
     static function show($id)
     {

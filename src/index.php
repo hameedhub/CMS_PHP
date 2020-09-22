@@ -6,5 +6,9 @@ require_once('helper/Response.php');
 
 Session::init();
 
+if(Session::get('isLoggedIn')){
+require_once('helper/SKey.php');
+}
+
 
 ?>
