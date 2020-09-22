@@ -24,6 +24,8 @@ class Categories
     }
     static function show($id)
     {
+        $q = DB::query('SELECT * FROM categories WHERE id=:id', array(':id'=> $id));
+        return RHelper::response(true, 200, 'success', $q);
     }
     static function destroy($id)
     {
