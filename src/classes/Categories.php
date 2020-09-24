@@ -34,12 +34,12 @@ class Categories
         if ($skey) {
             return $skey;
         };
-        $check = DB::query('SELECT name FROM categories WHERE name=:name', array(':name' => $name));
+        $check = DB::query('SELECT name FROM categories WHERE id=:id', array(':id' => $id));
         if (count($check) > 0) {
             $name = empty($name) ? $check['name'] : $name;
             $description = empty($description) ? $check['description'] : $description;
 
-            $q = DB::query('UPDATE categories SET  WHERE id=:id', array(
+            $q = DB::query('UPDATE categories SET name=:name, description=:description WHERE id=:id', array(
                 ':id' => $id,
                 ':name' => $name,
                 ':description' => $description
@@ -47,7 +47,15 @@ class Categories
             return RHelper::response(true, 200, 'category was successfuly updated', $q);
         }
     }
-    static function destroy($id)
+    static function destroy($data)
     {
+        extract($data);
+        $skey = SKey::session($session_id, $user_id);
+        if ($skey) {
+            return $skey;
+        };
+        $q = DB::query('DELETE FROM categories WHERE id=:id', array(':id'=> $id));
+        return RHelper::response(true, 200, 'category was successfuly deleted', $q);
+
     }
 }
