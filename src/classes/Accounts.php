@@ -8,36 +8,34 @@ class Accounts{
             return $val;
         }
         extract($data);
-        if (!$user) {         
-        $skey = SKey::session($session_id, $user_id);
-        if ($skey) {
-            return $skey;
-        };
-        }
+       
 
-        $check = DB::query('SELECT address,tag FROM accounts WHERE address=:address AND tag=:tag', 
+        $check = DB::query('SELECT address,tag_id FROM accounts WHERE address=:address AND tag_id=:tag_id', 
         array(':address' => $address,
-        ':tag' => $tag
+        ':tag_id' => $tag_id
     ));
         if (count($check) > 0) {
             return   RHelper::response(false, 409, 'Account already exist');
         }
-        $q = DB::query('INSERT INTO `accounts`(`client_id`, `type`, `title`, `address`, `tag`, `status`) 
-        VALUES (:client_id,:type,:title,:address,:tag,:status)', 
+        $q = DB::query('INSERT INTO `accounts`(`client_id`, `tag_id`, `type_id`, `address`,`status`) 
+        VALUES (:client_id, :tag_id,:type_id,:address,:status)', 
         array(
             ':client_id' => $client_id,
-            ':type' => $type,
-            ':title' => $title,
+            ':tag_id' => $tag_id,
+            ':type_id' => $type_id,
             ':address' => $address,
-            ':tag'=> $tag
+            ':status'=> $status
         ));
-        return RHelper::response(true, 201, 'Category successfully created', $q);
+        return RHelper::response(true, 201, 'Account successfully created', $q);
     }
     static function show(){
     }
     static function index (){
+        $q = DB::query('SELECT * FROM accounts WHERE io = "ON" ORDER BY id DESC');
+        return RHelper::response(true, 200, 'success', $q);
     }
-    static function update(){
+    static function update($data){
+        
     }
     static function destroy(){
     }
@@ -80,6 +78,10 @@ class Accounts{
     static function indexOption($option){
         $q = DB::query('SELECT * FROM '.$option.' WHERE io="ON" ORDER BY id DESC');
         return RHelper::response(true, 200, 'success', $q);
+    }
+    static function showOption($option, $id){
+        $q = DB::query('SELECT * FROM '.$option.' WHERE io="ON" AND "'.$id.'" ORDER BY id DESC');
+        return RHelper::response(true, 200, 'success', $q[0]);
     }
     static function removeOption($data, $option){
         extract($data);

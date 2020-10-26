@@ -10,7 +10,7 @@ class AccountValidation{
         if(empty($address)){
             array_push($error_array, 'Address / Account Number is required');
         };
-        if(empty($tag)){
+        if(empty($tag_id)){
             array_push($error_array, 'Tag is required');
         };
         if(count($error_array) > 0){
