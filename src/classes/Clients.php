@@ -55,14 +55,17 @@ class Client
             return RHelper::response(false, 409, 'Email address already exist');
         }
     }
-    static function index($session_id, $user_id)
+    static function index()
     {
-        $skey = SKey::session($session_id, $user_id);
-        if ($skey) {
-            return $skey;
-        };
+       
         $q = DB::query('SELECT * FROM clients WHERE io = "ON" ORDER BY id DESC');
         return RHelper::response(true, 200, 'success', $q);
+    }
+    static function show($id)
+    {
+       
+        $q = DB::query('SELECT * FROM clients WHERE io = "ON" AND id ="'.$id.'" ORDER BY id DESC');
+        return RHelper::response(true, 200, 'success', $q[0]);
     }
     static function update($data, $user = false)
     {   
