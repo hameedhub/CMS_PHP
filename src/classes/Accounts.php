@@ -2,7 +2,7 @@
 
 class Accounts{
 
-    static function create($data, $user=false){
+    static function create($data){
         $val = AccountValidation::create($data);
         if ($val) {
             return $val;
@@ -28,16 +28,41 @@ class Accounts{
         ));
         return RHelper::response(true, 201, 'Account successfully created', $q);
     }
-    static function show(){
+    static function show($id){
+        $q = DB::query('SELECT * FROM accounts WHERE io = "ON" AND id="'.$id);
+        return RHelper::response(true, 200, 'success', $q);
     }
     static function index (){
         $q = DB::query('SELECT * FROM accounts WHERE io = "ON" ORDER BY id DESC');
         return RHelper::response(true, 200, 'success', $q);
     }
     static function update($data){
-        
+        extract($data);
+        $skey = SKey::session($session_id, $user_id);
+        if ($skey) {
+            return $skey;
+        };
+        $q = DB::query('UPDATE accounts SET status=:status WHERE id=:id', array(
+            ':id' => $id,
+            ':status' => $status
+        ));
+        return RHelper::response(true, 200, 'Account was successfuly updated', $q[0]);
     }
-    static function destroy(){
+    static function remove($data){
+        extract($data);
+
+        $skey = SKey::session($session_id, $user_id);
+        if ($skey) {
+            return $skey;
+        };
+        $check = DB::query('SELECT id FROM accounts WHERE id=:id  AND io = "ON"', array(':id' => $id));
+
+        if (count($check) > 0) {
+            $q = DB::query('UPDATE accounts SET io = "OFF"  WHERE id=:id', array(':id' => $id));
+            return RHelper::response(true, 200, 'Account was successfuly deleted', $q);
+        } else {
+            return RHelper::response(false, 404, 'Account not found');
+        }
     }
     static function myAccounts(){
     }
